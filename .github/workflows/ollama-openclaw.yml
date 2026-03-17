@@ -1,1 +1,25 @@
+name: Run Ollama on GitHub Cloud Server
 
+on:
+  workflow_dispatch: # 允许手动点一下运行
+
+jobs:
+  run-ollama:
+    runs-on: ubuntu-latest # 这就是 GitHub 免费远程云服务器
+    timeout-minutes: 10   # 免费版最长每次6小时
+
+    steps:
+      - name: Install Ollama
+        run: curl -fsSL https://ollama.com/install.sh | sh
+
+      - name: Start Ollama Server in background
+        run: ollama serve & continue-on-error: true
+
+      - name: Wait for server start
+        run: sleep 5
+
+      - name: Pull tinyllama (超小模型，适合免费服务器)
+        run: ollama pull tinyllama
+
+      - name: Run model and test
+        run: | ollama run tinyllama "你好，简单介绍自己"
